@@ -33,6 +33,25 @@ double T[7] = { 288.15,216.65,216.65,228.65,270.65,270.65,214.65 };             
 double L[7] = { -0.0065,0,0.001,0.0028,0,-0.0028,-0.002 };                      // Standard temperature lapse rate                      [K/m]
 double h[7] = { 0,11000,20000,32000,47000,51000,71000 };                        // Altitude at bottom of atmospheric layer              [m]
 
+struct Timer {
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+	std::chrono::duration<float> duration;
+
+	Timer()
+	{
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	~Timer()
+	{
+		end = std::chrono::high_resolution_clock::now();
+		duration = end - start;
+
+		float ms = duration.count() * 1000.0f;
+		std::cout << "timing: " << ms << " ms\n";
+	}
+};
+
 double atm_pres_model(double alt) {
 	// Using barometric formula,
 	// this absolute atmospheric pressure model
@@ -157,9 +176,10 @@ void read_csv(std::string Input_file) {
 		int altitude = std::stoi(tokens[0]);
 		int velocity = std::stoi(tokens[1]);
 	}
-}
+}//todo
 
 void write_csv(std::string Output_file) {
+	Timer timer;
 	std::cout << "Printing to csv...\n";
 	std::ofstream Outfile;
 	Outfile.open(Output_file);
