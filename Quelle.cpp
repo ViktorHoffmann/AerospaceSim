@@ -33,23 +33,6 @@ double T[7] = { 288.15,216.65,216.65,228.65,270.65,270.65,214.65 };             
 double L[7] = { -0.0065,0,0.001,0.0028,0,-0.0028,-0.002 };                      // Standard temperature lapse rate                      [K/m]
 double h[7] = { 0,11000,20000,32000,47000,51000,71000 };                        // Altitude at bottom of atmospheric layer              [m]
 
-struct Timer {
-	std::chrono::time_point<std::chrono::steady_clock> start, end;
-	std::chrono::duration<float> duration;
-
-	Timer() {
-		start = std::chrono::high_resolution_clock::now();
-	}
-
-	~Timer() {
-		end = std::chrono::high_resolution_clock::now();
-		duration = end - start;
-
-		float ms = duration.count() * 1000.0f;
-		std::cout << "exect:" << ms << "ms\n";
-	}
-};
-
 double atm_pres_model(double alt) {
 	// Using barometric formula,
 	// this absolute atmospheric pressure model
@@ -98,7 +81,6 @@ double atm_pres_model(double alt) {
 		std::cout << "Altitude must be positive\n";
 		return 0;
 	}
-	return 0;
 }
 
 double atm_temp_model(double alt) {
@@ -145,7 +127,6 @@ double atm_temp_model(double alt) {
 	{
 		std::cout << "Altitude must be positive\n";
 	}
-	return 0;
 }
 
 double dyn_pres_model(double vel, double alt) {
@@ -158,7 +139,6 @@ double dyn_pres_model(double vel, double alt) {
 	return dyn_pres_Pa;
 }
 
-/*
 void read_csv(std::string Input_file) {
 	std::stringstream ifile(Input_file);
 	std::string line;
@@ -178,10 +158,8 @@ void read_csv(std::string Input_file) {
 		int velocity = std::stoi(tokens[1]);
 	}
 }
-*/
 
 void write_csv(std::string Output_file) {
-	Timer timer;
 	std::cout << "Printing to csv...\n";
 	std::ofstream Outfile;
 	Outfile.open(Output_file);
