@@ -157,6 +157,7 @@ double dyn_pres_model(double vel, double alt) {
 	return dyn_pres_Pa;
 }
 
+/*
 void read_csv(std::string Input_file) {
 	std::stringstream ifile(Input_file);
 	std::string line;
@@ -176,6 +177,7 @@ void read_csv(std::string Input_file) {
 		int velocity = std::stoi(tokens[1]);
 	}
 }
+*/
 
 void write_csv(std::string Output_file) {
 	Timer timer;
