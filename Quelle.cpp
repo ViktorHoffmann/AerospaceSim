@@ -11,6 +11,8 @@ and outputs the simulation results into another .csv
 #include <string>
 #include <vector>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 // single-valued constants
 double g = 9.80665;                                                             // Gravitational acceleration at sea level              [m/s^2]
@@ -30,6 +32,23 @@ double P[7] = { 101325,22632.10,5474.89,868.02,110.91,66.94,3.96 };             
 double T[7] = { 288.15,216.65,216.65,228.65,270.65,270.65,214.65 };             // Standard temperature at bottom of atmospheric layer  [K]
 double L[7] = { -0.0065,0,0.001,0.0028,0,-0.0028,-0.002 };                      // Standard temperature lapse rate                      [K/m]
 double h[7] = { 0,11000,20000,32000,47000,51000,71000 };                        // Altitude at bottom of atmospheric layer              [m]
+
+struct Timer {
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+	std::chrono::duration<float> duration;
+
+	Timer() {
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	~Timer() {
+		end = std::chrono::high_resolution_clock::now();
+		duration = end - start;
+
+		float ms = duration.count() * 1000.0f;
+		std::cout << "exect:" << ms << "ms\n";
+	}
+};
 
 double atm_pres_model(double alt) {
 	// Using barometric formula,
@@ -159,6 +178,7 @@ void read_csv(std::string Input_file) {
 }
 
 void write_csv(std::string Output_file) {
+	Timer timer;
 	std::cout << "Printing to csv...\n";
 	std::ofstream Outfile;
 	Outfile.open(Output_file);
@@ -180,8 +200,9 @@ int main() {
 	std::string Output_file = "aerodynamics.csv";
 	std::string Input_file = "ascend_pattern.csv";
 
-	read_csv(Input_file);
+	//read_csv(Input_file);
 	write_csv(Output_file);
+
 	system("pause");
 	return 0;
 }
