@@ -98,6 +98,7 @@ double atm_pres_model(double alt) {
 		std::cout << "Altitude must be positive\n";
 		return 0;
 	}
+	return 0;
 }
 
 double atm_temp_model(double alt) {
@@ -143,8 +144,8 @@ double atm_temp_model(double alt) {
 	else if (alt < h[0])
 	{
 		std::cout << "Altitude must be positive\n";
-		return 0;
 	}
+	return 0;
 }
 
 double dyn_pres_model(double vel, double alt) {
