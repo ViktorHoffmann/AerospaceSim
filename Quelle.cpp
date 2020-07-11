@@ -184,14 +184,12 @@ void read_csv(std::string Input_file) {
 				{
 					// Column 2: velocity
 					vel[i] = atof(line.c_str());
-					std::cout << "Column 2: " << vel[i] << std::endl;
 					i++; j--;
 				}
 				else if (j == 0)
 				{
 					// Column 1: altitude
 					alt[i] = atof(line.c_str());
-					std::cout << "Column 1: " << alt[i] << std::endl;
 					i++; j++;
 				}
 			}
