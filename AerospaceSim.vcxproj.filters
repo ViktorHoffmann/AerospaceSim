@@ -23,7 +23,7 @@
     <None Include="aerodynamics.csv">
       <Filter>Quelldateien</Filter>
     </None>
-    <None Include="..\..\..\Desktop\ascend_pattern.csv">
+    <None Include="ascend_pattern.csv">
       <Filter>Quelldateien</Filter>
     </None>
   </ItemGroup>

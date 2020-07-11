@@ -7,12 +7,13 @@ and outputs the simulation results into another .csv
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
-#include <vector>
+#include <sstream>
 #include <cmath>
 #include <chrono>
 #include <thread>
+#include <stdlib.h>
+//#include <vector>
 
 // single-valued constants
 double g = 9.80665;                                                             // Gravitational acceleration at sea level              [m/s^2]
@@ -21,8 +22,8 @@ double Ru = 8.3144598;                                                          
 double Rs = 287.058;                                                            // Specific gas constant                                [J/(kg*K)]
 
 // multi-valued constants
-double alt;                                                                     // Altitude                                             [m]
-double vel;                                                                     // Velocity                                             [m/s]
+double alt[100000];                                                             // Altitude                                             [m]
+double vel[100000];                                                             // Velocity                                             [m/s]
 double atm_temp;                                                                // Temperature at altitude                              [K]
 double atm_pres_Pa;                                                             // Pressure at altitude                                 [Pa]
 double atm_pres_rho;                                                            // Density at altitude                                  [kg/m^3]
@@ -159,24 +160,45 @@ double dyn_pres_model(double vel, double alt) {
 }
 
 void read_csv(std::string Input_file) {
-	std::stringstream ifile(Input_file);
-	std::string line;
+	// This function anticipates
+	// that the input csv only has two columns
+	// which is the standard and iterates the input csv
+	// to parse the data into two datasets.
 
-	while (std::getline(ifile, line))
-	{
-		std::istringstream iss{ line };
-		std::vector<std::string> tokens;
-		std::string token;
+	std::cout << "Reading csv...\n";
 
-		while (std::getline(iss, token, ';'))
+	std::ifstream Infile;
+	Infile.open("ascend_pattern.csv");
+
+	int i = 0; int j = 0;
+	while (Infile.good()) {
+		std::string line;
+		// Read whole line
+		while (getline(Infile, line))
 		{
-			tokens.push_back(token);
+			std::istringstream iline(line);
+			// Seperate line by the delimiter
+			while (getline(iline, line, ';'))
+			{
+				if (j == 1)
+				{
+					// Column 2: velocity
+					vel[i] = atof(line.c_str());
+					std::cout << "Column 2: " << vel[i] << std::endl;
+					i++; j--;
+				}
+				else if (j == 0)
+				{
+					// Column 1: altitude
+					alt[i] = atof(line.c_str());
+					std::cout << "Column 1: " << alt[i] << std::endl;
+					i++; j++;
+				}
+			}
 		}
-
-		int altitude = std::stoi(tokens[0]);
-		int velocity = std::stoi(tokens[1]);
 	}
-}//todo
+	std::cout << "Reading done\n";
+}
 
 void write_csv(std::string Output_file) {
 	Timer timer;
@@ -186,11 +208,11 @@ void write_csv(std::string Output_file) {
 	Outfile << "Altitude [m]" << ";" << "Velocity [m/s]" << ";" << "Temperature [K]"
 		<< ";" << "Static Pressure [Pa]" << ";" << "Static Density [kg/m^3]" << ";" << "Dynamic Pressure [Pa]" << "\n";
 
-	//Simulation Loop
-	for (alt = 0, vel = 0; alt < 100000 && vel < 100000; alt++, vel++)
+	//New Simulation loop
+	for (int i = 0; i < 99999; i++)
 	{
-		Outfile << alt << ";" << vel << ";" << atm_temp
-			<< ";" << atm_pres_model(alt) << ";" << atm_pres_rho << ";" << dyn_pres_model(vel, alt) << "\n";
+		Outfile << alt[i] << ";" << vel[i] << ";" << atm_temp
+			<< ";" << atm_pres_model(alt[i]) << ";" << atm_pres_rho << ";" << dyn_pres_model(vel[i], alt[i]) << "\n";
 	}
 
 	Outfile.close();
@@ -201,7 +223,7 @@ int main() {
 	std::string Output_file = "aerodynamics.csv";
 	std::string Input_file = "ascend_pattern.csv";
 
-	//read_csv(Input_file);
+	read_csv(Input_file);
 	write_csv(Output_file);
 
 	system("pause");
