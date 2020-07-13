@@ -1,2 +1,2 @@
 # AerospaceSim
-CLI aerospace simulation tool
+CLI aerospace numerical simulation tool
