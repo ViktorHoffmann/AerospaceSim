@@ -5,14 +5,11 @@ and outputs the simulation results into another .csv
 */
 #include "Header.h"
 
-double alt[100000];        // Altitude        [m]
-double vel[100000];        // Velocity        [m/s]
-
 struct Timer {
 	std::chrono::time_point<std::chrono::steady_clock> start, end;
 	std::chrono::duration<float> duration;
 
-	Timer()
+	Timer():start(),end(),duration()
 	{
 		start = std::chrono::high_resolution_clock::now();
 	}
@@ -33,46 +30,52 @@ double atm_pres_model(double alt) {
 	// returns pressure and density approximation in
 	// pascal and rho for given altitude.
 
+	double atm_pres; //Pa
 	if (alt >= h[0] && alt < h[1])
 	{
 		int i = 0;
-		return atm_pres_Pa = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
+		return atm_pres = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
 	}
 	if (alt >= h[1] && alt < h[2])
 	{
 		// Temperature lapse rate is zero
 		int i = 1;
-		return atm_pres_Pa = P[i] * exp((((g * (-1)) * M * (alt - h[i])) / (Ru * T[i])));
+		return atm_pres = P[i] * exp((((g * (-1)) * M * (alt - h[i])) / (Ru * T[i])));
 	}
 	if (alt >= h[2] && alt < h[3])
 	{
 		int i = 2;
-		return atm_pres_Pa = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
+		return atm_pres = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
 	}
 	if (alt >= h[3] && alt < h[4])
 	{
 		int i = 3;
-		return atm_pres_Pa = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
+		return atm_pres = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
 	}
 	if (alt >= h[4] && alt < h[5])
 	{
 		// Temperature lapse rate is zero
 		int i = 4;
-		return atm_pres_Pa = P[i] * exp((((g * (-1)) * M * (alt - h[i])) / (Ru * T[i])));
+		return atm_pres = P[i] * exp((((g * (-1)) * M * (alt - h[i])) / (Ru * T[i])));
 	}
 	if (alt >= h[5] && alt < h[6])
 	{
 		int i = 5;
-		return atm_pres_Pa = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
+		return atm_pres = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
 	}
 	if (alt >= h[6])
 	{
 		int i = 6;
-		return atm_pres_Pa = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
+		return atm_pres = P[i] * pow((T[i] / (T[i] + L[i] * (alt - h[i]))), ((g * M) / (Ru * L[i])));
 	}
 	else if (alt < h[0])
 	{
 		std::cout << "Altitude must be positive\n";
+		return 0;
+	}
+	else
+	{
+		std::cout << "error\n";
 		return 0;
 	}
 }
@@ -82,6 +85,7 @@ double atm_temp_model(double alt) {
 	// and temperature lapse rate to model the
 	// absolute atmospheric temperature as linear functions
 
+	double atm_temp; //K
 	if (alt >= h[0] && alt < h[1])
 	{
 		int i = 0;
@@ -121,16 +125,26 @@ double atm_temp_model(double alt) {
 	{
 		std::cout << "Altitude must be positive\n";
 	}
+	else
+	{
+		std::cout << "error\n";
+		return 0;
+	}
+}
+
+double atm_dens_model(double alt) {
+	// Calculation of atmospheric density
+
+	double atm_dens; //rho
+	return atm_dens = (atm_pres_model(alt) / (Rs * atm_temp_model(alt)));
 }
 
 double dyn_pres_model(double vel, double alt) {
 	// This function calculates the dynamic pressure
-	// with velocity, atmospheric density and the
-	// atmospheric temperature model.
+	// with velocity and atmospheric density
 
-	atm_pres_rho = atm_pres_model(alt) / (Rs * atm_temp_model(alt));
-	dyn_pres_Pa = ((atm_pres_rho * pow(vel, 2)) / 2);
-	return dyn_pres_Pa;
+	double dyn_pres; //Pa
+	return dyn_pres = ((atm_dens_model(alt) * pow(vel, 2)) / 2);
 }
 
 void read_csv(std::string Input_file) {
@@ -139,7 +153,6 @@ void read_csv(std::string Input_file) {
 	// which is the standard and iterates the input csv
 	// to parse the data into two arrays.
 	Timer timer;
-
 	std::cout << "Reading csv...\n";
 
 	std::ifstream Infile;
@@ -158,20 +171,23 @@ void read_csv(std::string Input_file) {
 				if (j == 1)
 				{
 					// Column 2: velocity
-					vel[i] = strtod(line.c_str(), NULL);
-					//vel[i] = atof(line.c_str());
+					vel.push_back(strtod(line.c_str(), NULL));
+					//tr1: vel[i] = strtod(line.c_str(), NULL);	//todo
+					//org: vel[i] = atof(line.c_str());
 					i++; j--;
 				}
 				else if (j == 0)
 				{
 					// Column 1: altitude
-					alt[i] = strtod(line.c_str(), NULL);
+					alt.push_back(strtod(line.c_str(), NULL));
+					//alt[i] = strtod(line.c_str(), NULL);	//todo
 					//alt[i] = atof(line.c_str());
 					i++; j++;
 				}
 			}
 		}
 	}
+	std::cout << (alt.size() * (vel.size() <= alt.size()) + (vel.size() * (vel.size() > alt.size()))) << " elements parsed\n";
 	std::cout << "Reading done\n";
 }
 
@@ -184,10 +200,9 @@ void write_csv(std::string Output_file) {
 		<< ";" << "Static Pressure [Pa]" << ";" << "Static Density [kg/m^3]" << ";" << "Dynamic Pressure [Pa]" << "\n";
 
 	//New Simulation loop
-	for (int i = 0; i < 99999; i++)
+	for (int i = 0; i < (alt.size() * (vel.size() <= alt.size()) + (vel.size() * (vel.size() > alt.size()))); i++)
 	{
-		Outfile << alt[i] << ";" << vel[i] << ";" << atm_temp
-			<< ";" << atm_pres_model(alt[i]) << ";" << atm_pres_rho << ";" << dyn_pres_model(vel[i], alt[i]) << "\n";
+		Outfile << alt[i] << ";" << vel[i] << ";" << atm_temp_model(alt[i]) << ";" << atm_pres_model(alt[i]) << ";" << atm_dens_model(alt[i]) << ";" << dyn_pres_model(vel[i], alt[i]) << "\n";
 	}
 
 	Outfile.close();
