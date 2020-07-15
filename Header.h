@@ -40,7 +40,8 @@ double atm_dens_model(double alt);
 double dyn_pres_model(double vel, double alt);
 
 // Ascend
-// TODO
+double asc_alt();
+double asc_vel();
 
 // File management
 void read_csv(std::string Input_file);
