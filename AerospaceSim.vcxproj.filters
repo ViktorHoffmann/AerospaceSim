@@ -31,7 +31,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="ascend.cpp">
+    <ClCompile Include="aero_dyn.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="asc_pat.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="f_manage.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

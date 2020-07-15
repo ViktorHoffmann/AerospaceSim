@@ -138,7 +138,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ascend.cpp" />
+    <ClCompile Include="aero_dyn.cpp" />
+    <ClCompile Include="asc_pat.cpp" />
+    <ClCompile Include="f_manage.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
