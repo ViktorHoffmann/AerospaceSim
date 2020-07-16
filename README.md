@@ -1,5 +1,5 @@
 # AerospaceSim
-CLI aerospace numerical simulation tool
+CLI aerospace simulation tool
 
 _What does it do?_
 
